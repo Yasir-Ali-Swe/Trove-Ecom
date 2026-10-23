@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Coverage and test results
+coverage/
+.nyc_output/
+test-results/
+
+# Build output
+dist/
+build/
+
+# Runtime files
+*.pid
+*.pid.lock
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Local database and backup files
+*.dump
+*.sqlite
+*.sqlite3
+
+# Debugging
+*.tsbuildinfo
