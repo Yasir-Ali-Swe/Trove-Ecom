@@ -1,10 +1,9 @@
-
 import { Tabs } from "expo-router";
 import {
     Home,
-    Search,
+    Compass,
+    Heart,
     ShoppingCart,
-    Package,
     User,
 } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
@@ -42,11 +41,21 @@ export default function TabLayout() {
             />
 
             <Tabs.Screen
-                name="search"
+                name="explore"
                 options={{
-                    title: "Search",
+                    title: "Explore",
                     tabBarIcon: ({ color, size }) => (
-                        <Search size={size} color={color} />
+                        <Compass size={size} color={color} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="wishlist"
+                options={{
+                    title: "Wishlist",
+                    tabBarIcon: ({ color, size }) => (
+                        <Heart size={size} color={color} />
                     ),
                 }}
             />
@@ -62,19 +71,9 @@ export default function TabLayout() {
             />
 
             <Tabs.Screen
-                name="orders"
+                name="account"
                 options={{
-                    title: "Orders",
-                    tabBarIcon: ({ color, size }) => (
-                        <Package size={size} color={color} />
-                    ),
-                }}
-            />
-
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: "Profile",
+                    title: "Account",
                     tabBarIcon: ({ color, size }) => (
                         <User size={size} color={color} />
                     ),
