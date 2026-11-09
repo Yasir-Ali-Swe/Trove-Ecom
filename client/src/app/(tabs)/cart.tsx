@@ -64,15 +64,6 @@ export default function CartScreen() {
     setDiscount(0);
   };
 
-  const handleCheckout = () => {
-    Alert.alert(
-      "Checkout",
-      `Your order total is Rs. ${subtotal.toLocaleString("en-PK", {
-        maximumFractionDigits: 2,
-      })}`
-    );
-  };
-
   const formatPrice = (amount: number) =>
     `Rs. ${amount.toLocaleString("en-PK", {
       minimumFractionDigits: 2,
@@ -185,7 +176,7 @@ export default function CartScreen() {
 
           {/* Checkout button */}
           <Pressable
-            onPress={handleCheckout}
+            onPress={() => router.push("/checkout" as any)}
             className="bg-orange-500 rounded-xl py-4 mt-5 flex-row items-center justify-center active:opacity-80"
           >
             <Text className="text-white font-bold text-base mr-2">
