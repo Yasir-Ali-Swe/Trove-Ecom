@@ -13,6 +13,7 @@ import {
 } from "react-native-safe-area-context";
 import { NavigationBar } from "expo-navigation-bar";
 import { Platform } from "react-native";
+import CustomHeader from "@/components/CustomHeader";
 
 const BG_COLOR = "#020617"; // slate-950
 const ACTIVE_COLOR = "#F97316"; // orange-500
@@ -27,7 +28,9 @@ function TabNavigator() {
             )}
             <Tabs
                 screenOptions={{
-                    headerShown: false,
+                    // headerShown: false,
+                    headerShown: true,
+                    header: () => <CustomHeader />,
 
                     tabBarActiveTintColor: ACTIVE_COLOR,
                     tabBarInactiveTintColor: INACTIVE_COLOR,
