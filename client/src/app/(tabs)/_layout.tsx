@@ -15,8 +15,7 @@ import {
     ShoppingCart,
     UserRound,
 } from "lucide-react-native";
-
-import CustomHeader from "@/components/CustomHeader";
+import CustomHeader from "@/components/ui/CustomHeader";
 
 const BG_COLOR = "#020617";
 const ACTIVE_COLOR = "#F97316";
