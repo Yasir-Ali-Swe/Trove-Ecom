@@ -13,8 +13,6 @@ import {
   Baby,
   Sofa,
 } from "lucide-react-native";
-import SwipeableTabScreen from "@/components/SwipeableTabScreen";
-
 import CategoryCard from "@/components/CategoryCard";
 
 const categories = [
@@ -38,40 +36,38 @@ export default function CategoriesScreen() {
   };
 
   return (
-    <SwipeableTabScreen index={1}>
-      <View className="flex-1 bg-[#020617]">
-        <FlatList
-          data={categories}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingBottom: 32,
-          }}
-          columnWrapperStyle={{
-            justifyContent: "space-between",
-          }}
-          ListHeaderComponent={
-            <View className="pt-3 pb-5">
-              <Text className="text-2xl font-bold text-white">
-                Explore Categories
-              </Text>
+    <View className="flex-1 bg-[#020617]">
+      <FlatList
+        data={categories}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 32,
+        }}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+        }}
+        ListHeaderComponent={
+          <View className="pt-3 pb-5">
+            <Text className="text-2xl font-bold text-white">
+              Explore Categories
+            </Text>
 
-              <Text className="text-sm text-slate-400 mt-1">
-                Find everything you need
-              </Text>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <CategoryCard
-              name={item.name}
-              icon={item.icon}
-              onPress={() => handleCategoryPress(item.name)}
-            />
-          )}
-        />
-      </View>
-    </SwipeableTabScreen>
+            <Text className="text-sm text-slate-400 mt-1">
+              Find everything you need
+            </Text>
+          </View>
+        }
+        renderItem={({ item }) => (
+          <CategoryCard
+            name={item.name}
+            icon={item.icon}
+            onPress={() => handleCategoryPress(item.name)}
+          />
+        )}
+      />
+    </View>
   );
 }
