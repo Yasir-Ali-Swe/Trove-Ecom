@@ -13,12 +13,12 @@ export default function PaymentMethodCard({
     return (
         <Pressable
             onPress={onPress}
-            className={`flex-row items-center rounded-xl border p-4 ${selected
+            className={`flex-row items-center rounded-md border p-4 ${selected
                 ? "bg-orange-500/10 border-orange-500"
                 : "bg-slate-900 border-slate-800"
                 }`}
         >
-            <View className="w-12 h-12 rounded-xl bg-slate-800 items-center justify-center">
+            <View className="w-12 h-12 rounded-md bg-slate-800 items-center justify-center">
                 <Banknote size={25} color="#F97316" />
             </View>
 
