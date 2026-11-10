@@ -1,64 +1,42 @@
-import { Image, Pressable, Text, View } from "react-native";
-import { Minus, Plus, X } from "lucide-react-native";
+import { View, Text, Pressable, Image } from "react-native";
+import { Minus, Plus, Trash2 } from "lucide-react-native";
 
-export interface CartProduct {
+export type CartProduct = {
     id: string;
     name: string;
     image: string;
     price: number;
     quantity: number;
-}
+};
 
-interface CartItemProps {
+type Props = {
     item: CartProduct;
     onQuantityChange: (id: string, quantity: number) => void;
     onRemove: (id: string) => void;
-}
+};
 
 export default function CartItem({
     item,
     onQuantityChange,
     onRemove,
-}: CartItemProps) {
+}: Props) {
+    const formatPrice = (amount: number) =>
+        `Rs. ${amount.toLocaleString("en-PK", {
+            maximumFractionDigits: 2,
+        })}`;
+
     return (
-        <View className="flex-row items-center bg-[#0F172A] border border-[#1E293B] rounded-xl p-3 mb-3">
-            {/* Quantity controls */}
-            <View className="items-center justify-between bg-[#020617] border border-[#334155] rounded-xl w-10 h-[76px] py-1">
-                <Pressable
-                    onPress={() =>
-                        onQuantityChange(item.id, item.quantity + 1)
-                    }
-                    hitSlop={5}
-                >
-                    <Plus size={14} color="#94A3B8" />
-                </Pressable>
+        <View className="flex-row items-center gap-3 py-4 border-b border-[#1E293B]">
 
-                <Text className="text-white font-semibold text-sm">
-                    {item.quantity}
-                </Text>
-
-                <Pressable
-                    onPress={() =>
-                        onQuantityChange(
-                            item.id,
-                            Math.max(1, item.quantity - 1)
-                        )
-                    }
-                    hitSlop={5}
-                >
-                    <Minus size={14} color="#94A3B8" />
-                </Pressable>
-            </View>
-
-            {/* Product image */}
+            {/* Product Image */}
             <Image
                 source={{ uri: item.image }}
-                className="w-[76px] h-[76px] rounded-xl mx-3 bg-[#1E293B]"
+                className="w-[76px] h-[76px] rounded-xl bg-[#0F172A]"
                 resizeMode="cover"
             />
 
-            {/* Product details */}
-            <View className="flex-1 justify-center">
+            {/* Product Details */}
+            <View className="flex-1 gap-2">
                 <Text
                     className="text-white font-semibold text-sm"
                     numberOfLines={2}
@@ -66,23 +44,51 @@ export default function CartItem({
                     {item.name}
                 </Text>
 
-                <Text className="text-orange-500 font-bold text-sm mt-1">
-                    Rs. {item.price.toLocaleString()}
-                </Text>
+                {/* Quantity Controls */}
+                <View className="flex-row items-center gap-3">
 
-                <Text className="text-slate-400 text-xs mt-2">
-                    {item.quantity} × Rs. {item.price.toLocaleString()}
-                </Text>
+                    <Pressable
+                        disabled={item.quantity <= 1}
+                        onPress={() =>
+                            onQuantityChange(item.id, item.quantity - 1)
+                        }
+                        className={`w-8 h-8 rounded-lg border border-[#334155] items-center justify-center ${item.quantity <= 1 ? "opacity-40" : ""
+                            }`}
+                    >
+                        <Minus size={15} color="#FFFFFF" />
+                    </Pressable>
+
+                    <Text className="text-white font-bold text-sm min-w-4 text-center">
+                        {item.quantity}
+                    </Text>
+
+                    <Pressable
+                        onPress={() =>
+                            onQuantityChange(item.id, item.quantity + 1)
+                        }
+                        className="w-8 h-8 rounded-lg bg-orange-500 items-center justify-center active:opacity-80"
+                    >
+                        <Plus size={15} color="#FFFFFF" />
+                    </Pressable>
+
+                </View>
             </View>
 
-            {/* Remove button */}
-            <Pressable
-                onPress={() => onRemove(item.id)}
-                className="w-7 h-7 rounded-lg bg-red-500/10 items-center justify-center self-start"
-                hitSlop={5}
-            >
-                <X size={15} color="#F87171" />
-            </Pressable>
+            {/* Price and Remove */}
+            <View className="items-end justify-between self-stretch py-1">
+
+                <Pressable
+                    onPress={() => onRemove(item.id)}
+                    hitSlop={8}
+                >
+                    <Trash2 size={17} color="#EF4444" />
+                </Pressable>
+
+                <Text className="text-white font-bold text-sm">
+                    {formatPrice(item.price * item.quantity)}
+                </Text>
+
+            </View>
         </View>
     );
 }
