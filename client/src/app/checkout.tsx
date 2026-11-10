@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
     Alert,
+    Image,
     KeyboardAvoidingView,
     Platform,
     Pressable,
@@ -8,19 +9,46 @@ import {
     Text,
     View,
 } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { ArrowLeft, ShieldCheck } from "lucide-react-native";
+
+import {
+    ArrowLeft,
+    ShieldCheck,
+} from "lucide-react-native";
 
 import CheckoutInput from "@/components/CheckoutInput";
 import PaymentMethodCard from "@/components/PaymentMethodCard";
 
 const ACTIVE_COLOR = "#F97316";
 
+// Demo order items - replace with your shared cart state
+const orderItems = [
+    {
+        id: "1",
+        name: "Premium Casual Sneakers",
+        image:
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300",
+        price: 4500,
+        quantity: 2,
+    },
+    {
+        id: "2",
+        name: "Classic Wrist Watch",
+        image:
+            "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300",
+        price: 3200,
+        quantity: 1,
+    },
+];
+
 export default function Checkout() {
-    // Demo values: replace these with the authenticated user's profile data.
+    // Customer Information
     const [customerName, setCustomerName] = useState("Yasir Ali");
-    const [customerNumber, setCustomerNumber] = useState("+92 300 1234567");
+    const [customerNumber, setCustomerNumber] = useState(
+        "+92 300 1234567"
+    );
     const [customerAddress, setCustomerAddress] = useState(
         "Faisalabad, Pakistan"
     );
@@ -28,9 +56,16 @@ export default function Checkout() {
     const [notes, setNotes] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("COD");
 
-    // Demo total: replace with the total from your shared cart state.
-    const total = 10;
+    // Price Calculations
+    const total = orderItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
 
+    const formatPrice = (amount: number) =>
+        `Rs. ${amount.toLocaleString("en-PK")}`;
+
+    // Confirm Order
     const handleConfirmOrder = () => {
         if (!customerName.trim()) {
             Alert.alert("Missing information", "Please enter your name.");
@@ -38,12 +73,18 @@ export default function Checkout() {
         }
 
         if (!customerNumber.trim()) {
-            Alert.alert("Missing information", "Please enter your phone number.");
+            Alert.alert(
+                "Missing information",
+                "Please enter your phone number."
+            );
             return;
         }
 
         if (!customerAddress.trim()) {
-            Alert.alert("Missing information", "Please enter your delivery address.");
+            Alert.alert(
+                "Missing information",
+                "Please enter your delivery address."
+            );
             return;
         }
 
@@ -58,17 +99,21 @@ export default function Checkout() {
             ]
         );
 
-        // TODO: Send the order details to your backend here.
+        // TODO: Send order details to your backend.
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-slate-950" edges={["top", "bottom"]}>
+        <SafeAreaView
+            className="flex-1 bg-slate-950"
+            edges={["top", "bottom"]}
+        >
             <KeyboardAvoidingView
                 className="flex-1"
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
                 {/* Header */}
                 <View className="flex-row items-center px-5 py-4 border-b border-slate-800">
+
                     <Pressable
                         onPress={() => router.back()}
                         className="w-10 h-10 rounded-full bg-slate-900 items-center justify-center"
@@ -79,15 +124,20 @@ export default function Checkout() {
                     <Text className="text-white text-xl font-bold ml-4">
                         Checkout
                     </Text>
+
                 </View>
 
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{ padding: 20, paddingBottom: 30 }}
+                    contentContainerStyle={{
+                        padding: 20,
+                        paddingBottom: 35,
+                    }}
                 >
-                    {/* Customer Information */}
-                    <View className="mb-6">
+                    {/* Delivery Information */}
+                    <View className="mb-7">
+
                         <Text className="text-white text-lg font-bold mb-1">
                             Delivery Information
                         </Text>
@@ -118,10 +168,12 @@ export default function Checkout() {
                             placeholder="Enter your complete address"
                             multiline
                         />
+
                     </View>
 
                     {/* Payment Method */}
                     <View className="mb-7">
+
                         <Text className="text-white text-lg font-bold mb-1">
                             Payment Method
                         </Text>
@@ -134,10 +186,12 @@ export default function Checkout() {
                             selected={paymentMethod === "COD"}
                             onPress={() => setPaymentMethod("COD")}
                         />
+
                     </View>
 
                     {/* Order Notes */}
-                    <View className="mb-7">
+                    <View className="mb-8">
+
                         <Text className="text-white text-lg font-bold mb-1">
                             Additional Notes
                         </Text>
@@ -153,52 +207,137 @@ export default function Checkout() {
                             placeholder="Write your delivery instructions here..."
                             multiline
                         />
+
                     </View>
 
                     {/* Order Summary */}
-                    <View className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
-                        <Text className="text-white text-lg font-bold mb-4">
+                    <View className="mb-7">
+
+                        <Text className="text-white text-lg font-bold mb-5 text-center">
                             Order Summary
                         </Text>
 
-                        <View className="flex-row justify-between items-center mb-3">
-                            <Text className="text-slate-400 text-sm">Payment Method</Text>
-                            <Text className="text-white text-sm font-medium">
-                                Cash on Delivery
+                        {/* Table Header */}
+                        <View className="flex-row items-center pb-3 border-b border-slate-700">
+
+                            <Text className="text-slate-400 text-[10px] font-semibold flex-1">
+                                Product
                             </Text>
+
+                            <Text className="text-slate-400 text-[10px] font-semibold w-[55px] text-center">
+                                Unit Price
+                            </Text>
+
+                            <Text className="text-slate-400 text-[10px] font-semibold w-[42px] text-center">
+                                Qty
+                            </Text>
+
+                            <Text className="text-slate-400 text-[10px] font-semibold w-[88px] text-right">
+                                Subtotal
+                            </Text>
+
                         </View>
 
-                        <View className="h-px bg-slate-800 my-2" />
-
-                        <View className="flex-row justify-between items-center mt-2">
-                            <Text className="text-white text-base font-bold">
-                                Total Amount
-                            </Text>
-
-                            <Text
-                                className="text-orange-500 text-2xl font-bold"
-                                style={{ color: ACTIVE_COLOR }}
+                        {/* Product Rows */}
+                        {orderItems.map((item) => (
+                            <View
+                                key={item.id}
+                                className="flex-row items-center py-4 border-b border-slate-800"
                             >
-                                ${total.toFixed(2)}
+
+                                {/* Product Image and Name */}
+                                <View className="flex-1 flex-row items-center gap-2 pr-1">
+
+                                    <Image
+                                        source={{ uri: item.image }}
+                                        className="w-10 h-10 rounded-lg bg-slate-900"
+                                        resizeMode="cover"
+                                    />
+
+                                    <Text
+                                        className="text-white text-[10px] font-medium flex-1"
+                                        numberOfLines={2}
+                                    >
+                                        {item.name}
+                                    </Text>
+
+                                </View>
+
+                                {/* Unit Price */}
+                                <Text className="text-white text-[10px] w-[55px] text-center">
+                                    {formatPrice(item.price)}
+                                </Text>
+
+                                {/* Quantity */}
+                                <Text className="text-white text-[11px] font-semibold w-[42px] text-center">
+                                    {item.quantity}
+                                </Text>
+
+                                {/* Subtotal */}
+                                <View className="w-[88px] items-end">
+
+                                    <Text className="text-slate-400 text-[9px]">
+                                        {item.quantity} × {item.price.toLocaleString("en-PK")}
+                                    </Text>
+
+                                    <Text className="text-white text-[11px] font-bold mt-1">
+                                        {formatPrice(item.price * item.quantity)}
+                                    </Text>
+
+                                </View>
+
+                            </View>
+                        ))}
+
+                        {/* Total */}
+                        <View className="flex-row justify-between items-center py-5 border-b border-slate-700">
+
+                            <Text className="text-white text-base font-bold">
+                                Total
                             </Text>
+
+                            <Text className="text-orange-500 text-xl font-bold">
+                                {formatPrice(total)}
+                            </Text>
+
                         </View>
+
+                        {/* Delivery Method */}
+                        <View className="flex-row justify-between items-center py-4">
+
+                            <Text className="text-slate-400 text-sm">
+                                Delivery
+                            </Text>
+
+                            <Text className="text-white text-sm font-semibold">
+                                {paymentMethod === "COD"
+                                    ? "Cash on Delivery"
+                                    : paymentMethod}
+                            </Text>
+
+                        </View>
+
                     </View>
 
-                    {/* Confirm Order */}
+                    {/* Place Order Button */}
                     <Pressable
                         onPress={handleConfirmOrder}
-                        className="bg-orange-500 h-14 rounded-xl flex-row items-center justify-center active:opacity-80"
+                        className="bg-orange-500 h-14 rounded-md flex-row items-center justify-center active:opacity-80"
+                        style={{ backgroundColor: ACTIVE_COLOR }}
                     >
+
                         <ShieldCheck size={21} color="#FFFFFF" />
 
                         <Text className="text-white font-bold text-base ml-2">
-                            Confirm Order
+                            Place Order
                         </Text>
+
                     </Pressable>
 
                     <Text className="text-slate-500 text-xs text-center mt-4">
                         Please review your delivery information before confirming.
                     </Text>
+
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
