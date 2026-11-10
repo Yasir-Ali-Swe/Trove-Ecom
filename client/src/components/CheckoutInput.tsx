@@ -31,7 +31,7 @@ export default function CheckoutInput({
                 keyboardType={keyboardType}
                 multiline={multiline}
                 textAlignVertical={multiline ? "top" : "center"}
-                className={`bg-slate-900 border border-slate-800 rounded-xl px-4 text-white text-sm ${multiline ? "h-28 py-3" : "h-14"
+                className={`bg-slate-900 border border-slate-800 rounded-md px-4 text-white text-sm ${multiline ? "h-28 py-3" : "h-14"
                     }`}
             />
         </View>
