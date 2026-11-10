@@ -9,7 +9,6 @@ import { Heart } from "lucide-react-native";
 
 import WishlistItem from "@/components/WishlistItem";
 import EmptyWishlist from "@/components/EmptyWishlist";
-import SwipeableTabScreen from "@/components/SwipeableTabScreen";
 
 import { WishlistProduct } from "@/types/wishlist";
 
@@ -60,62 +59,60 @@ export default function WishlistScreen() {
   };
 
   return (
-    <SwipeableTabScreen index={2}>
-      <View className="flex-1 bg-slate-950">
-        <FlatList
-          data={wishlist}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingTop: 20,
-            paddingBottom: 30,
-            flexGrow: 1,
+    <View className="flex-1 bg-slate-950">
+      <FlatList
+        data={wishlist}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingTop: 20,
+          paddingBottom: 30,
+          flexGrow: 1,
 
-          }}
-          columnWrapperStyle={{
-            justifyContent: "space-between",
-          }}
-          ListHeaderComponent={
-            <View className="mb-6">
-              <View className="flex-row items-center justify-between">
-                <View>
-                  <Text className="text-2xl font-bold text-white">
-                    My Wishlist
-                  </Text>
+        }}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+        }}
+        ListHeaderComponent={
+          <View className="mb-6">
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-2xl font-bold text-white">
+                  My Wishlist
+                </Text>
 
-                  <Text className="mt-1 text-sm text-slate-400">
-                    Your favorite products in one place
-                  </Text>
-                </View>
+                <Text className="mt-1 text-sm text-slate-400">
+                  Your favorite products in one place
+                </Text>
+              </View>
 
-                <View className="flex-row items-center gap-2 rounded-full bg-orange-500/10 px-3 py-2">
-                  <Heart
-                    size={16}
-                    color="#F97316"
-                    fill="#F97316"
-                  />
+              <View className="flex-row items-center gap-2 rounded-full bg-orange-500/10 px-3 py-2">
+                <Heart
+                  size={16}
+                  color="#F97316"
+                  fill="#F97316"
+                />
 
-                  <Text className="font-semibold text-orange-500">
-                    {wishlist.length}
-                  </Text>
-                </View>
+                <Text className="font-semibold text-orange-500">
+                  {wishlist.length}
+                </Text>
               </View>
             </View>
-          }
-          renderItem={({ item }) => (
-            <View className="w-[48%]">
-              <WishlistItem
-                product={item}
-                onRemove={handleRemove}
-                onAddToCart={handleAddToCart}
-              />
-            </View>
-          )}
-          ListEmptyComponent={<EmptyWishlist />}
-        />
-      </View>
-    </SwipeableTabScreen>
+          </View>
+        }
+        renderItem={({ item }) => (
+          <View className="w-[48%]">
+            <WishlistItem
+              product={item}
+              onRemove={handleRemove}
+              onAddToCart={handleAddToCart}
+            />
+          </View>
+        )}
+        ListEmptyComponent={<EmptyWishlist />}
+      />
+    </View>
   );
 }
