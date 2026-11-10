@@ -18,9 +18,9 @@ export default function CategoryCard({
     return (
         <Pressable
             onPress={onPress}
-            className="w-[48%] bg-[#0F172A] border border-[#1E293B] rounded-xl py-6 px-3 mb-4 items-center active:opacity-70"
+            className="w-[48%] bg-[#0F172A] border border-[#1E293B] rounded-md py-6 px-3 mb-4 items-center active:opacity-70"
         >
-            <View className="w-14 h-14 rounded-xl bg-[#1E293B] items-center justify-center mb-3">
+            <View className="w-14 h-14 rounded-md bg-[#1E293B] items-center justify-center mb-3">
                 <Icon size={28} color={ACTIVE_COLOR} strokeWidth={2} />
             </View>
 
