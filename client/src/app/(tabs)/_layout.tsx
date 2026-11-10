@@ -5,7 +5,7 @@ import {
     House,
     LayoutGrid,
     Heart,
-    ShoppingBag,
+    ShoppingCart,
     UserRound,
 } from "lucide-react-native";
 
@@ -91,7 +91,7 @@ function TabNavigator() {
                     options={{
                         title: "Cart",
                         tabBarIcon: ({ color, focused }) => (
-                            <ShoppingBag size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
+                            <ShoppingCart size={22} color={color} strokeWidth={focused ? 2.5 : 2} />
                         ),
                     }}
                 />
