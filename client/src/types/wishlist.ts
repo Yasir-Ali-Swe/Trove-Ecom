@@ -1,6 +1,9 @@
-export interface WishlistProduct {
-    id: string;
-    name: string;
-    image: string;
-    price: number;
+import type { Product } from "./product";
+
+export type WishlistProduct = Product;
+
+export interface WishlistItemProps {
+    product: WishlistProduct;
+    onRemove: (id: string) => void;
+    onAddToCart: (product: WishlistProduct) => void;
 }
