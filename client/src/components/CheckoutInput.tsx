@@ -1,4 +1,5 @@
 import { Text, TextInput, View } from "react-native";
+import { colors } from "@/theme";
 
 interface CheckoutInputProps {
     label: string;
@@ -19,7 +20,7 @@ export default function CheckoutInput({
 }: CheckoutInputProps) {
     return (
         <View className="mb-5">
-            <Text className="text-sm font-semibold text-slate-300 mb-2">
+            <Text className="text-sm font-semibold text-foreground-muted mb-2">
                 {label}
             </Text>
 
@@ -27,11 +28,11 @@ export default function CheckoutInput({
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                placeholderTextColor="#64748B"
+                placeholderTextColor={colors.muted.subtle}
                 keyboardType={keyboardType}
                 multiline={multiline}
                 textAlignVertical={multiline ? "top" : "center"}
-                className={`bg-slate-900 border border-slate-800 rounded-md px-4 text-white text-sm ${multiline ? "h-28 py-3" : "h-14"
+                className={`bg-input border border-border rounded-md px-4 text-foreground text-sm ${multiline ? "h-28 py-3" : "h-14"
                     }`}
             />
         </View>
