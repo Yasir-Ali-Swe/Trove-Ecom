@@ -1,4 +1,4 @@
-﻿import { Platform, View } from "react-native";
+import { Platform, View } from "react-native";
 import { Tabs, usePathname, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavigationBar } from "expo-navigation-bar";
@@ -16,10 +16,7 @@ import {
     UserRound,
 } from "lucide-react-native";
 import CustomHeader from "@/components/ui/CustomHeader";
-
-const BG_COLOR = "#020617";
-const ACTIVE_COLOR = "#F97316";
-const INACTIVE_COLOR = "#94A3B8";
+import { colors } from "@/theme";
 
 // Order MUST match the visual tab order
 const TAB_ROUTES = [
@@ -79,8 +76,8 @@ export default function TabLayout() {
                             // ⚠️ Disable default animations so swipe feels snappy
                             animation: "none",
 
-                            tabBarActiveTintColor: ACTIVE_COLOR,
-                            tabBarInactiveTintColor: INACTIVE_COLOR,
+                            tabBarActiveTintColor: colors.primary.DEFAULT,
+                            tabBarInactiveTintColor: colors.muted.foreground,
                             tabBarShowLabel: true,
 
                             tabBarLabelStyle: {
@@ -91,8 +88,8 @@ export default function TabLayout() {
                             tabBarIconStyle: { marginTop: 4 },
 
                             tabBarStyle: {
-                                backgroundColor: BG_COLOR,
-                                borderTopColor: "#1E293B",
+                                backgroundColor: colors.background,
+                                borderTopColor: colors.border.DEFAULT,
                                 borderTopWidth: 1,
                                 paddingBottom: Math.max(insets.bottom, 5),
                                 height: 50 + insets.bottom,
