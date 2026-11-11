@@ -1,12 +1,9 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
 
-const ProductDetailScreen = () => {
-    return (
-        <View>
-            <Text>ProductDetailScreen</Text>
-        </View>
-    )
+export default function OrderDetailScreen() {
+  return (
+    <View className="flex-1 justify-center items-center bg-background">
+      <Text className="text-xl font-bold text-foreground">Order Details</Text>
+    </View>
+  );
 }
-
-export default ProductDetailScreen
