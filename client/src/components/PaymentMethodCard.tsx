@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { Banknote, CheckCircle2 } from "lucide-react-native";
+import { colors } from "@/theme";
 
 interface PaymentMethodCardProps {
     selected: boolean;
@@ -14,28 +15,28 @@ export default function PaymentMethodCard({
         <Pressable
             onPress={onPress}
             className={`flex-row items-center rounded-md border p-4 ${selected
-                ? "bg-orange-500/10 border-orange-500"
-                : "bg-slate-900 border-slate-800"
+                ? "bg-primary/10 border-primary"
+                : "bg-surface border-border"
                 }`}
         >
-            <View className="w-12 h-12 rounded-md bg-slate-800 items-center justify-center">
-                <Banknote size={25} color="#F97316" />
+            <View className="w-12 h-12 rounded-md bg-surface-elevated items-center justify-center">
+                <Banknote size={25} color={colors.primary.DEFAULT} />
             </View>
 
             <View className="flex-1 ml-3">
-                <Text className="text-white font-semibold text-base">
+                <Text className="text-foreground font-semibold text-base">
                     Cash on Delivery
                 </Text>
 
-                <Text className="text-slate-400 text-xs mt-1">
+                <Text className="text-muted-foreground text-xs mt-1">
                     Pay when your order arrives
                 </Text>
             </View>
 
             <CheckCircle2
                 size={23}
-                color={selected ? "#F97316" : "#64748B"}
-                fill={selected ? "#F97316" : "transparent"}
+                color={selected ? colors.primary.DEFAULT : colors.muted.subtle}
+                fill={selected ? colors.primary.DEFAULT : "transparent"}
             />
         </Pressable>
     );
