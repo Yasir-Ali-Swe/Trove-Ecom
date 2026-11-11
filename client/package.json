@@ -4,12 +4,14 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo/ui": "~58.0.27",
+    "@reduxjs/toolkit": "^2.14.0",
     "expo": "~58.0.23",
     "expo-constants": "~58.0.15",
     "expo-device": "~58.0.5",
     "expo-font": "~58.0.11",
     "expo-glass-effect": "~58.0.5",
     "expo-image": "~58.0.18",
+    "expo-linear-gradient": "~58.0.3",
     "expo-linking": "~58.0.16",
     "expo-navigation-bar": "~58.0.4",
     "expo-router": "~58.0.30",
@@ -30,7 +32,8 @@
     "react-native-svg": "15.16.0",
     "react-native-user-avatar": "^2.0.0",
     "react-native-web": "~0.21.4",
-    "react-native-worklets": "0.13.0"
+    "react-native-worklets": "0.13.0",
+    "react-redux": "^9.3.1"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
