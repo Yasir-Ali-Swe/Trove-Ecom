@@ -9,10 +9,8 @@ import {
     Text,
     View,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-
 import {
     ArrowLeft,
     ShieldCheck,
@@ -20,8 +18,7 @@ import {
 
 import CheckoutInput from "@/components/CheckoutInput";
 import PaymentMethodCard from "@/components/PaymentMethodCard";
-
-const ACTIVE_COLOR = "#F97316";
+import { colors } from "@/theme";
 
 // Demo order items - replace with your shared cart state
 const orderItems = [
@@ -63,48 +60,45 @@ export default function Checkout() {
     );
 
     const formatPrice = (amount: number) =>
-        `Rs. ${amount.toLocaleString("en-PK")}`;
+        `Rs. ${amount.toLocaleString("en-PK", {
+            maximumFractionDigits: 2,
+        })}`;
 
-    // Confirm Order
+    // Confirm Order Handler
     const handleConfirmOrder = () => {
         if (!customerName.trim()) {
-            Alert.alert("Missing information", "Please enter your name.");
+            Alert.alert("Missing Info", "Please enter your full name.");
             return;
         }
 
         if (!customerNumber.trim()) {
-            Alert.alert(
-                "Missing information",
-                "Please enter your phone number."
-            );
+            Alert.alert("Missing Info", "Please enter your phone number.");
             return;
         }
 
         if (!customerAddress.trim()) {
-            Alert.alert(
-                "Missing information",
-                "Please enter your delivery address."
-            );
+            Alert.alert("Missing Info", "Please enter your complete address.");
             return;
         }
 
         Alert.alert(
-            "Order confirmed!",
-            "Your order has been submitted successfully.",
+            "Order Confirmed!",
+            `Thank you ${customerName}! Your order has been placed successfully.\n\nTotal: ${formatPrice(
+                total
+            )}\nPayment: ${paymentMethod === "COD" ? "Cash on Delivery" : paymentMethod
+            }`,
             [
                 {
-                    text: "Continue",
-                    onPress: () => router.replace("/(tabs)"),
+                    text: "Done",
+                    onPress: () => router.navigate("/(tabs)"),
                 },
             ]
         );
-
-        // TODO: Send order details to your backend.
     };
 
     return (
         <SafeAreaView
-            className="flex-1 bg-slate-950"
+            className="flex-1 bg-background"
             edges={["top", "bottom"]}
         >
             <KeyboardAvoidingView
@@ -112,19 +106,17 @@ export default function Checkout() {
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
                 {/* Header */}
-                <View className="flex-row items-center px-5 py-4 border-b border-slate-800">
-
+                <View className="flex-row items-center px-5 py-4 border-b border-border">
                     <Pressable
                         onPress={() => router.back()}
-                        className="w-10 h-10 rounded-full bg-slate-900 items-center justify-center"
+                        className="w-10 h-10 rounded-full bg-surface items-center justify-center active:opacity-75"
                     >
-                        <ArrowLeft size={22} color="#FFFFFF" />
+                        <ArrowLeft size={22} color={colors.foreground.DEFAULT} />
                     </Pressable>
 
-                    <Text className="text-white text-xl font-bold ml-4">
+                    <Text className="text-foreground text-xl font-bold ml-4">
                         Checkout
                     </Text>
-
                 </View>
 
                 <ScrollView
@@ -137,12 +129,11 @@ export default function Checkout() {
                 >
                     {/* Delivery Information */}
                     <View className="mb-7">
-
-                        <Text className="text-white text-lg font-bold mb-1">
+                        <Text className="text-foreground text-lg font-bold mb-1">
                             Delivery Information
                         </Text>
 
-                        <Text className="text-slate-400 text-sm mb-5">
+                        <Text className="text-muted-foreground text-sm mb-5">
                             Where should we deliver your order?
                         </Text>
 
@@ -168,17 +159,15 @@ export default function Checkout() {
                             placeholder="Enter your complete address"
                             multiline
                         />
-
                     </View>
 
                     {/* Payment Method */}
                     <View className="mb-7">
-
-                        <Text className="text-white text-lg font-bold mb-1">
+                        <Text className="text-foreground text-lg font-bold mb-1">
                             Payment Method
                         </Text>
 
-                        <Text className="text-slate-400 text-sm mb-4">
+                        <Text className="text-muted-foreground text-sm mb-4">
                             Select how you want to pay.
                         </Text>
 
@@ -186,17 +175,15 @@ export default function Checkout() {
                             selected={paymentMethod === "COD"}
                             onPress={() => setPaymentMethod("COD")}
                         />
-
                     </View>
 
                     {/* Order Notes */}
                     <View className="mb-8">
-
-                        <Text className="text-white text-lg font-bold mb-1">
+                        <Text className="text-foreground text-lg font-bold mb-1">
                             Additional Notes
                         </Text>
 
-                        <Text className="text-slate-400 text-sm mb-4">
+                        <Text className="text-muted-foreground text-sm mb-4">
                             Any special instructions for your order?
                         </Text>
 
@@ -207,137 +194,118 @@ export default function Checkout() {
                             placeholder="Write your delivery instructions here..."
                             multiline
                         />
-
                     </View>
 
                     {/* Order Summary */}
                     <View className="mb-7">
-
-                        <Text className="text-white text-lg font-bold mb-5 text-center">
+                        <Text className="text-foreground text-lg font-bold mb-5 text-center">
                             Order Summary
                         </Text>
 
                         {/* Table Header */}
-                        <View className="flex-row items-center pb-3 border-b border-slate-700">
-
-                            <Text className="text-slate-400 text-[10px] font-semibold flex-1">
+                        <View className="flex-row items-center pb-3 border-b border-border-strong">
+                            <Text className="text-muted-foreground text-[10px] font-semibold flex-1">
                                 Product
                             </Text>
 
-                            <Text className="text-slate-400 text-[10px] font-semibold w-[55px] text-center">
+                            <Text className="text-muted-foreground text-[10px] font-semibold w-[55px] text-center">
                                 Unit Price
                             </Text>
 
-                            <Text className="text-slate-400 text-[10px] font-semibold w-[42px] text-center">
+                            <Text className="text-muted-foreground text-[10px] font-semibold w-[42px] text-center">
                                 Qty
                             </Text>
 
-                            <Text className="text-slate-400 text-[10px] font-semibold w-[88px] text-right">
+                            <Text className="text-muted-foreground text-[10px] font-semibold w-[88px] text-right">
                                 Subtotal
                             </Text>
-
                         </View>
 
                         {/* Product Rows */}
                         {orderItems.map((item) => (
                             <View
                                 key={item.id}
-                                className="flex-row items-center py-4 border-b border-slate-800"
+                                className="flex-row items-center py-4 border-b border-border"
                             >
-
                                 {/* Product Image and Name */}
                                 <View className="flex-1 flex-row items-center gap-2 pr-1">
-
                                     <Image
                                         source={{ uri: item.image }}
-                                        className="w-10 h-10 rounded-lg bg-slate-900"
+                                        className="w-10 h-10 rounded-lg bg-surface"
                                         resizeMode="cover"
                                     />
 
                                     <Text
-                                        className="text-white text-[10px] font-medium flex-1"
+                                        className="text-foreground text-[10px] font-medium flex-1"
                                         numberOfLines={2}
                                     >
                                         {item.name}
                                     </Text>
-
                                 </View>
 
                                 {/* Unit Price */}
-                                <Text className="text-white text-[10px] w-[55px] text-center">
+                                <Text className="text-foreground text-[10px] w-[55px] text-center">
                                     {formatPrice(item.price)}
                                 </Text>
 
                                 {/* Quantity */}
-                                <Text className="text-white text-[11px] font-semibold w-[42px] text-center">
+                                <Text className="text-foreground text-[11px] font-semibold w-[42px] text-center">
                                     {item.quantity}
                                 </Text>
 
                                 {/* Subtotal */}
                                 <View className="w-[88px] items-end">
-
-                                    <Text className="text-slate-400 text-[9px]">
+                                    <Text className="text-muted-foreground text-[9px]">
                                         {item.quantity} × {item.price.toLocaleString("en-PK")}
                                     </Text>
 
-                                    <Text className="text-white text-[11px] font-bold mt-1">
+                                    <Text className="text-foreground text-[11px] font-bold mt-1">
                                         {formatPrice(item.price * item.quantity)}
                                     </Text>
-
                                 </View>
-
                             </View>
                         ))}
 
                         {/* Total */}
-                        <View className="flex-row justify-between items-center py-5 border-b border-slate-700">
-
-                            <Text className="text-white text-base font-bold">
+                        <View className="flex-row justify-between items-center py-5 border-b border-border-strong">
+                            <Text className="text-foreground text-base font-bold">
                                 Total
                             </Text>
 
-                            <Text className="text-orange-500 text-xl font-bold">
+                            <Text className="text-primary text-xl font-bold">
                                 {formatPrice(total)}
                             </Text>
-
                         </View>
 
                         {/* Delivery Method */}
                         <View className="flex-row justify-between items-center py-4">
-
-                            <Text className="text-slate-400 text-sm">
+                            <Text className="text-muted-foreground text-sm">
                                 Delivery
                             </Text>
 
-                            <Text className="text-white text-sm font-semibold">
+                            <Text className="text-foreground text-sm font-semibold">
                                 {paymentMethod === "COD"
                                     ? "Cash on Delivery"
                                     : paymentMethod}
                             </Text>
-
                         </View>
-
                     </View>
 
                     {/* Place Order Button */}
                     <Pressable
                         onPress={handleConfirmOrder}
-                        className="bg-orange-500 h-14 rounded-md flex-row items-center justify-center active:opacity-80"
-                        style={{ backgroundColor: ACTIVE_COLOR }}
+                        className="bg-primary h-14 rounded-md flex-row items-center justify-center active:bg-primary-dark"
                     >
+                        <ShieldCheck size={21} color={colors.primary.foreground} />
 
-                        <ShieldCheck size={21} color="#FFFFFF" />
-
-                        <Text className="text-white font-bold text-base ml-2">
+                        <Text className="text-primary-foreground font-bold text-base ml-2">
                             Place Order
                         </Text>
-
                     </Pressable>
 
-                    <Text className="text-slate-500 text-xs text-center mt-4">
+                    <Text className="text-muted-subtle text-xs text-center mt-4">
                         Please review your delivery information before confirming.
                     </Text>
-
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
