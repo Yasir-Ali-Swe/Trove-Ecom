@@ -1,64 +1,57 @@
-
 import { View, Text, Pressable } from "react-native";
-import { ShoppingCart, Bell } from "lucide-react-native";
+import { Bell } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import UserAvatar from 'react-native-user-avatar';
-
-const BG_COLOR = "#020617";
-const ACTIVE_COLOR = "#F97316";
-const INACTIVE_COLOR = "#94A3B8";
-const BORDER_COLOR = "#1E293B";
+import UserAvatar from "react-native-user-avatar";
+import { colors } from "@/theme";
 
 export default function CustomHeader() {
-    const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
 
-    return (
-        <View
-            style={{
-                backgroundColor: BG_COLOR,
-                paddingTop: insets.top,
-            }}
+  return (
+    <View
+      className="bg-background"
+      style={{
+        paddingTop: insets.top,
+      }}
+    >
+      <View className="px-4 h-[60px] flex-row items-center justify-between border-b border-border">
+        {/* App Logo & Name */}
+        <Pressable
+          onPress={() => router.navigate("/(tabs)")}
+          className="flex-row items-center gap-1.5"
         >
-            <View
-                className="px-5 flex-row items-center justify-between"
-                style={{
-                    height: 60,
-                    borderBottomWidth: 1,
-                    borderBottomColor: BORDER_COLOR,
-                }}
-            >
-                {/* App Name */}
-                <Text
-                    style={{
-                        color: ACTIVE_COLOR,
-                        fontSize: 24,
-                        fontWeight: "bold",
-                    }}
-                >
-                    Vibeo
-                </Text>
+          <Text className="text-2xl font-black text-primary tracking-tight">
+            Vibeo
+          </Text>
+          <View className="w-1.5 h-1.5 rounded-full bg-primary mt-1" />
+        </Pressable>
 
-                {/* Header Actions */}
-                <View className="flex-row items-center gap-5">
-                    <Pressable
-                        onPress={() => router.push("/notifications" as any)}
-                        hitSlop={10}
-                    >
-                        <Bell
-                            size={24}
-                            color={INACTIVE_COLOR}
-                            strokeWidth={2}
-                        />
-                    </Pressable>
-                    <Pressable
-                        onPress={() => router.push("/profile" as any)}
-                        hitSlop={10}
-                    >
-                        <UserAvatar size={26} name="Avishay Bar" />
-                    </Pressable>
-                </View>
-            </View>
+        {/* Header Actions */}
+        <View className="flex-row items-center gap-4">
+          {/* Notifications */}
+          <Pressable
+            onPress={() => router.push("/notifications")}
+            hitSlop={10}
+            className="w-9 h-9 rounded-full bg-surface border border-border items-center justify-center active:opacity-70"
+          >
+            <Bell size={18} color={colors.muted.foreground} strokeWidth={2} />
+          </Pressable>
+          {/* User Profile */}
+          <Pressable
+            onPress={() => router.push("/profile")}
+            hitSlop={10}
+            className="active:opacity-80"
+          >
+            <UserAvatar
+              size={30}
+              name="Yasir Ali"
+              bgColor={colors.surface.elevated}
+              textColor={colors.foreground.DEFAULT}
+            />
+          </Pressable>
         </View>
-    );
+      </View>
+    </View>
+  );
 }
