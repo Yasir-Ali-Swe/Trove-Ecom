@@ -1,12 +1,9 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native";
 
-const index = () => {
-    return (
-        <View>
-            <Text>index</Text>
-        </View>
-    )
+export default function OrdersScreen() {
+  return (
+    <View className="flex-1 justify-center items-center bg-background">
+      <Text className="text-xl font-bold text-foreground">Orders</Text>
+    </View>
+  );
 }
-
-export default index
