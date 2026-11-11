@@ -1,39 +1,24 @@
-﻿import { useState } from "react";
-import { CartProduct } from "@/components/CartItem";
-import EmptyCart from "@/components/EmptyCart";
-import CartWithItems from "@/components/CartWithItems";
+import EmptyCart from "@/components/cart/EmptyCart";
+import CartWithItems from "@/components/cart/CartWithItems";
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectCartItems,
+  selectCartDiscount,
+} from "@/store";
+import { updateQuantity, removeFromCart } from "@/store/cartSlice";
 
 export default function CartScreen() {
-  const [cartItems, setCartItems] = useState<CartProduct[]>([
-    {
-      id: "1",
-      name: "Premium Casual Sneakers",
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300",
-      price: 4500,
-      quantity: 2,
-    },
-    {
-      id: "2",
-      name: "Classic Wrist Watch",
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300",
-      price: 3200,
-      quantity: 1,
-    },
-  ]);
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector(selectCartItems);
+  const discount = useAppSelector(selectCartDiscount);
 
-  const [discount, setDiscount] = useState(0);
-
-  const updateQuantity = (id: string, quantity: number) => {
-    setCartItems((previous) =>
-      previous.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+  const handleUpdateQuantity = (id: string, quantity: number) => {
+    dispatch(updateQuantity({ id, quantity }));
   };
 
-  const removeItem = (id: string) => {
-    setCartItems((previous) => previous.filter((item) => item.id !== id));
-    setDiscount(0);
+  const handleRemoveItem = (id: string) => {
+    dispatch(removeFromCart(id));
   };
 
   if (cartItems.length === 0) {
@@ -44,8 +29,8 @@ export default function CartScreen() {
     <CartWithItems
       cartItems={cartItems}
       discount={discount}
-      onQuantityChange={updateQuantity}
-      onRemove={removeItem}
+      onQuantityChange={handleUpdateQuantity}
+      onRemove={handleRemoveItem}
     />
   );
 }
