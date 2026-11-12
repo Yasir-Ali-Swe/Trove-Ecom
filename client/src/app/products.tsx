@@ -8,26 +8,34 @@ import ProductCategoryTabs from "@/components/products/ProductCategoryTabs";
 import ProductCard from "@/components/products/ProductCard";
 import { PRODUCTS } from "@/constants/products";
 import { CATEGORIES } from "@/constants/categories";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 import type { Product } from "@/types/product";
-
 export default function ProductsScreen() {
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{
-    collection?: string;
-    categoryId?: string;
-    category?: string;
-    title?: string;
-  }>();
+  const params = useLocalSearchParams<"/products">();
+
+  const collectionParam = Array.isArray(params.collection)
+    ? params.collection[0]
+    : params.collection;
+  const categoryIdParam = Array.isArray(params.categoryId)
+    ? params.categoryId[0]
+    : params.categoryId;
+  const categoryParam = Array.isArray(params.category)
+    ? params.category[0]
+    : params.category;
+  const titleParam = Array.isArray(params.title)
+    ? params.title[0]
+    : params.title;
 
   // Validate collection parameter ("featured" | "new-arrivals" | "all")
   const activeCollection = useMemo(() => {
-    const raw = params.collection?.toLowerCase().trim();
+    const raw = collectionParam?.toLowerCase().trim();
     if (raw === "featured" || raw === "new-arrivals" || raw === "all") {
       return raw;
     }
     return "all";
-  }, [params.collection]);
+  }, [collectionParam]);
 
   // Determine base products from the active collection scope
   const baseCollectionProducts = useMemo(() => {
@@ -44,17 +52,17 @@ export default function ProductsScreen() {
 
   // Determine initial category from route parameters
   const initialCategoryId = useMemo(() => {
-    if (params.categoryId) {
-      return params.categoryId;
+    if (categoryIdParam) {
+      return categoryIdParam;
     }
-    if (params.category) {
+    if (categoryParam) {
       const match = CATEGORIES.find(
-        (c) => c.name.toLowerCase() === params.category?.toLowerCase()
+        (c) => c.name.toLowerCase() === categoryParam.toLowerCase()
       );
       if (match) return match.id;
     }
     return "all";
-  }, [params.categoryId, params.category]);
+  }, [categoryIdParam, categoryParam]);
 
   const [userSelectedId, setUserSelectedId] = useState<string | null>(null);
   const selectedCategoryId = userSelectedId ?? initialCategoryId;
@@ -96,11 +104,11 @@ export default function ProductsScreen() {
   };
 
   const collectionBadgeText = useMemo(() => {
-    if (params.title) return params.title;
+    if (titleParam) return titleParam;
     if (activeCollection === "featured") return "Featured";
     if (activeCollection === "new-arrivals") return "New Arrivals";
     return null;
-  }, [activeCollection, params.title]);
+  }, [activeCollection, titleParam]);
 
   return (
     <View className="flex-1 bg-background">
@@ -120,7 +128,7 @@ export default function ProductsScreen() {
                 <Pressable
                   onPress={() => router.back()}
                   hitSlop={8}
-                  className="w-9 h-9 rounded-xl bg-card border border-border items-center justify-center mr-1 active:opacity-75"
+                  className="w-9 h-9 rounded-full bg-card border border-border items-center justify-center mr-1 active:opacity-75"
                   accessibilityLabel="Go back"
                 >
                   <ArrowLeft
@@ -134,7 +142,7 @@ export default function ProductsScreen() {
                 Vibeo
               </Text>
               {collectionBadgeText ? (
-                <View className="bg-primary/15 border border-primary/30 px-2 py-0.5 rounded-md ml-0.5">
+                <View className="bg-primary/15 border border-primary/30 px-2 py-0.5 rounded-xs ml-0.5">
                   <Text className="text-[10px] font-black text-primary uppercase tracking-wider">
                     {collectionBadgeText}
                   </Text>
@@ -146,7 +154,7 @@ export default function ProductsScreen() {
             <Pressable
               onPress={handleOpenSearch}
               hitSlop={8}
-              className="w-9 h-9 rounded-xl bg-card border border-border items-center justify-center active:opacity-75 mr-1"
+              className="w-9 h-9 rounded-full bg-card border border-border items-center justify-center active:opacity-75 mr-1"
               accessibilityLabel="Search products"
               accessibilityRole="button"
             >
