@@ -16,7 +16,8 @@ import {
     UserRound,
 } from "lucide-react-native";
 import CustomHeader from "@/components/ui/CustomHeader";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
+import { useAppSelector, selectCartTotalCount } from "@/store";
 
 // Order MUST match the visual tab order
 const TAB_ROUTES = [
@@ -30,6 +31,8 @@ const TAB_ROUTES = [
 const SWIPE_THRESHOLD = 80;
 
 export default function TabLayout() {
+    const { colors, isDark } = useTheme();
+    const cartCount = useAppSelector(selectCartTotalCount);
     const insets = useSafeAreaInsets();
     const pathname = usePathname();
     const currentIndex = TAB_ROUTES.findIndex(
@@ -64,7 +67,7 @@ export default function TabLayout() {
 
     return (
         <>
-            {Platform.OS === "android" && <NavigationBar style="dark" />}
+            {Platform.OS === "android" && <NavigationBar style={isDark ? "dark" : "light"} />}
 
             <GestureDetector gesture={swipeGesture}>
                 <View style={{ flex: 1 }} collapsable={false}>
@@ -139,6 +142,13 @@ export default function TabLayout() {
                             name="cart"
                             options={{
                                 title: "Cart",
+                                tabBarBadge: cartCount > 0 ? cartCount : undefined,
+                                tabBarBadgeStyle: {
+                                    backgroundColor: colors.primary.DEFAULT,
+                                    color: colors.primary.foreground,
+                                    fontSize: 10,
+                                    fontWeight: "bold",
+                                },
                                 tabBarIcon: ({ color, focused }) => (
                                     <ShoppingCart
                                         size={22}
