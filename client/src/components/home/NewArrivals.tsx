@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import { router } from "expo-router";
 
-import HomeSectionHeader from "./HomeSectionHeader";
-import ProductCard from "@/components/product/ProductCard";
+import SectionHeader from "@/components/ui/SectionHeader";
+import ProductActionCard from "@/components/products/ProductActionCard";
 import { NEW_ARRIVALS } from "@/constants/products";
 import type { Product } from "@/types/product";
 
@@ -32,7 +32,7 @@ export default function NewArrivals({
   return (
     <View className="mb-6">
       {/* Section Header */}
-      <HomeSectionHeader
+      <SectionHeader
         title="New Arrivals"
         subtitle="Discover the latest products added to Trove."
         viewAllText="View All"
@@ -46,7 +46,7 @@ export default function NewArrivals({
             key={product.id}
             className="w-[48.2%] mb-3.5"
           >
-            <ProductCard product={product} />
+            <ProductActionCard product={product} />
           </View>
         ))}
       </View>
