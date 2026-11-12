@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,17 +15,17 @@ import {
   useAppDispatch,
   useAppSelector,
   selectIsInWishlist,
+  selectIsInCart,
   selectCartTotalCount,
 } from "@/store";
 import { toggleWishlist } from "@/store/wishlistSlice";
-import { addToCart } from "@/store/cartSlice";
-import { colors } from "@/theme";
-
-const ADDED_FEEDBACK_MS = 1800;
+import { addToCart, removeProductFromCart } from "@/store/cartSlice";
+import { useTheme } from "@/theme";
 
 export default function ProductDetailScreen() {
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<"/products/[id]">();
   const dispatch = useAppDispatch();
 
   const product = useMemo(() => {
@@ -33,22 +33,14 @@ export default function ProductDetailScreen() {
     return PRODUCTS.find((p) => p.id === id) ?? null;
   }, [id]);
 
-  const isWishlisted = useAppSelector(
-    product ? selectIsInWishlist(product.id) : () => false
-  );
+  const productId = product?.id ?? (typeof id === "string" && id !== "index" ? id : "");
+  const isWishlisted = useAppSelector(selectIsInWishlist(productId));
+  const isInCart = useAppSelector(selectIsInCart(productId));
   const cartCount = useAppSelector(selectCartTotalCount);
 
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({});
   const [missingVariants, setMissingVariants] = useState<string[]>([]);
-  const [isAdded, setIsAdded] = useState(false);
-  const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (addedTimer.current) clearTimeout(addedTimer.current);
-    };
-  }, []);
 
   if (!product) {
     return (
@@ -66,7 +58,7 @@ export default function ProductDetailScreen() {
         <Pressable
           onPress={() => router.replace("/products")}
           accessibilityRole="button"
-          className="rounded-xl bg-primary px-6 py-3 active:bg-primary-dark"
+          className="rounded-md bg-primary px-6 py-3 active:bg-primary-dark"
         >
           <Text className="text-sm font-bold text-primary-foreground">
             Browse products
@@ -77,7 +69,7 @@ export default function ProductDetailScreen() {
   }
 
   const stockLimit = product.stock ?? 20;
-  const isInStock = product.inStock ?? stockLimit > 0;
+  const isInStock = !(product.inStock === false || product.stock === 0);
 
   const handleSelectOption = (variantName: string, option: string) => {
     setSelectedVariants((prev) => ({ ...prev, [variantName]: option }));
@@ -87,7 +79,7 @@ export default function ProductDetailScreen() {
   // Returns true when every required variant has a selection
   const validate = () => {
     const missing = (product.variants ?? [])
-      .filter((v) => !selectedVariants[v.name])
+      .filter((v) => v.options && v.options.length > 0 && !selectedVariants[v.name])
       .map((v) => v.name);
     setMissingVariants(missing);
     return missing.length === 0;
@@ -105,11 +97,14 @@ export default function ProductDetailScreen() {
   };
 
   const handleAddToCart = () => {
+    // Already in cart: tapping again removes every line of this product
+    if (isInCart) {
+      dispatch(removeProductFromCart(product.id));
+      return;
+    }
+
     if (!validate()) return;
     addCurrentToCart();
-    setIsAdded(true);
-    if (addedTimer.current) clearTimeout(addedTimer.current);
-    addedTimer.current = setTimeout(() => setIsAdded(false), ADDED_FEEDBACK_MS);
   };
 
   const handleBuyNow = () => {
@@ -228,7 +223,7 @@ export default function ProductDetailScreen() {
 
       <ProductPurchaseBar
         inStock={isInStock}
-        isAdded={isAdded}
+        inCart={isInCart}
         onAddToCart={handleAddToCart}
         onBuyNow={handleBuyNow}
         bottomInset={insets.bottom}
