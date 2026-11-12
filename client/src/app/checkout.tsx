@@ -16,12 +16,29 @@ import {
     ShieldCheck,
 } from "lucide-react-native";
 
-import CheckoutInput from "@/components/CheckoutInput";
-import PaymentMethodCard from "@/components/PaymentMethodCard";
-import { colors } from "@/theme";
+import CheckoutInput from "@/components/checkout/CheckoutInput";
+import PaymentMethodCard from "@/components/checkout/PaymentMethodCard";
+import { useTheme } from "@/theme";
+import {
+    useAppDispatch,
+    useAppSelector,
+    selectCartItems,
+    placeOrder,
+    clearCart,
+} from "@/store";
+import type { OrderItem } from "@/types/order";
 
-// Demo order items - replace with your shared cart state
-const orderItems = [
+interface CheckoutLineItem {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    quantity: number;
+    selectedVariants?: Record<string, string>;
+}
+
+// Demo order items - fallback if opened with empty cart
+const orderItems: CheckoutLineItem[] = [
     {
         id: "1",
         name: "Premium Casual Sneakers",
@@ -41,6 +58,11 @@ const orderItems = [
 ];
 
 export default function Checkout() {
+    const { colors } = useTheme();
+    const dispatch = useAppDispatch();
+    const cartItems = useAppSelector(selectCartItems);
+    const activeItems: CheckoutLineItem[] = cartItems.length > 0 ? cartItems : orderItems;
+
     // Customer Information
     const [customerName, setCustomerName] = useState("Yasir Ali");
     const [customerNumber, setCustomerNumber] = useState(
@@ -54,8 +76,8 @@ export default function Checkout() {
     const [paymentMethod, setPaymentMethod] = useState("COD");
 
     // Price Calculations
-    const total = orderItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+    const total = activeItems.reduce(
+        (sum: number, item: CheckoutLineItem) => sum + item.price * item.quantity,
         0
     );
 
@@ -80,6 +102,36 @@ export default function Checkout() {
             Alert.alert("Missing Info", "Please enter your complete address.");
             return;
         }
+
+        const itemsToPlace: OrderItem[] = activeItems.map((item: CheckoutLineItem) => ({
+            id: item.id,
+            productId: item.id.includes("::") ? item.id.split("::")[0] : item.id,
+            name: item.name,
+            image: item.image,
+            price: item.price,
+            quantity: item.quantity,
+            variants: "selectedVariants" in item ? item.selectedVariants : undefined,
+        }));
+
+        dispatch(
+            placeOrder({
+                items: itemsToPlace,
+                subtotal: total,
+                shipping: 0,
+                discount: 0,
+                total,
+                paymentMethod: paymentMethod === "COD" ? "Cash on Delivery" : paymentMethod,
+                shippingAddress: {
+                    name: customerName,
+                    phone: customerNumber,
+                    address: customerAddress,
+                    city: "Faisalabad",
+                    state: "Punjab",
+                    country: "Pakistan",
+                },
+            })
+        );
+        dispatch(clearCart());
 
         Alert.alert(
             "Order Confirmed!",
@@ -222,7 +274,7 @@ export default function Checkout() {
                         </View>
 
                         {/* Product Rows */}
-                        {orderItems.map((item) => (
+                        {activeItems.map((item: CheckoutLineItem) => (
                             <View
                                 key={item.id}
                                 className="flex-row items-center py-4 border-b border-border"
@@ -231,7 +283,7 @@ export default function Checkout() {
                                 <View className="flex-1 flex-row items-center gap-2 pr-1">
                                     <Image
                                         source={{ uri: item.image }}
-                                        className="w-10 h-10 rounded-lg bg-surface"
+                                        className="w-10 h-10 rounded-sm bg-surface"
                                         resizeMode="cover"
                                     />
 
