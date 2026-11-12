@@ -1,16 +1,17 @@
+import { memo } from "react";
 import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 
 import StatusBadge from "./StatusBadge";
 import type { Order } from "@/types/order";
-import { useTheme } from "@/theme";
-import { formatOrderDate } from "@/utils/orders";
+import { useTheme, radius } from "@/theme";
+import { formatOrderDate } from "@/utils/date";
 import { formatPrice } from "@/utils/format";
 
 const THUMB = 56;
 const MAX_THUMBS = 3;
 
-export default function OrderCard({
+function OrderCard({
     order,
     onPress,
 }: {
@@ -30,7 +31,7 @@ export default function OrderCard({
             accessibilityLabel={`Order ${order.orderNumber}, ${order.status}`}
             style={({ pressed }) => ({
                 padding: 16,
-                borderRadius: 16,
+                borderRadius: radius.lg,
                 borderWidth: 1,
                 borderColor: colors.border.DEFAULT,
                 backgroundColor: colors.card.DEFAULT,
@@ -62,7 +63,7 @@ export default function OrderCard({
                                 width: THUMB,
                                 height: THUMB,
                                 marginRight: 8,
-                                borderRadius: 10,
+                                borderRadius: radius.sm,
                                 backgroundColor: colors.surface.elevated,
                             }}
                         />
@@ -72,7 +73,7 @@ export default function OrderCard({
                             style={{
                                 width: THUMB,
                                 height: THUMB,
-                                borderRadius: 10,
+                                borderRadius: radius.sm,
                                 alignItems: "center",
                                 justifyContent: "center",
                                 backgroundColor: colors.surface.elevated,
@@ -97,3 +98,5 @@ export default function OrderCard({
         </Pressable>
     );
 }
+
+export default memo(OrderCard);
