@@ -1,29 +1,25 @@
-import { Alert, FlatList, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { Heart } from "lucide-react-native";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 import WishlistItem from "@/components/wishlist/WishlistItem";
 import EmptyWishlist from "@/components/wishlist/EmptyWishlist";
-import type { WishlistProduct } from "@/types/wishlist";
 import {
   useAppDispatch,
   useAppSelector,
   selectWishlistItems,
+  selectWishlistCount,
 } from "@/store";
 import { removeFromWishlist } from "@/store/wishlistSlice";
-import { addToCart } from "@/store/cartSlice";
 
 export default function WishlistScreen() {
+  const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const wishlist = useAppSelector(selectWishlistItems);
+  const wishlistCount = useAppSelector(selectWishlistCount);
 
   const handleRemove = (id: string) => {
     dispatch(removeFromWishlist(id));
-  };
-
-  const handleAddToCart = (product: WishlistProduct) => {
-    dispatch(addToCart({ product }));
-    Alert.alert("Added to Cart", `${product.name} has been added to your cart.`);
   };
 
   return (
@@ -57,7 +53,7 @@ export default function WishlistScreen() {
               <View className="flex-row items-center gap-2 rounded-full bg-primary/10 px-3.5 py-1.5 border border-primary/20">
                 <Heart size={16} color={colors.primary.DEFAULT} fill={colors.primary.DEFAULT} />
                 <Text className="font-semibold text-primary text-sm">
-                  {wishlist.length}
+                  {wishlistCount}
                 </Text>
               </View>
             </View>
@@ -69,7 +65,6 @@ export default function WishlistScreen() {
             <WishlistItem
               product={item}
               onRemove={handleRemove}
-              onAddToCart={handleAddToCart}
             />
           </View>
         )}
