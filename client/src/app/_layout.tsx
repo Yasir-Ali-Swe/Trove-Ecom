@@ -1,15 +1,40 @@
-import { Stack } from "expo-router";
+import { useEffect, useMemo } from "react";
+import { Platform } from "react-native";
+import { Stack, DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { NavigationBar } from "expo-navigation-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
+import * as SystemUI from "expo-system-ui";
 
-import { store } from "@/store";
+import { store, StorePersistGate } from "@/store";
 import { ThemeProvider, useTheme } from "@/theme";
 import "../global.css";
 
 function RootStack() {
   const { colors, isDark } = useTheme();
+
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(colors.background).catch(() => { });
+  }, [colors.background]);
+
+  const navTheme = useMemo(() => {
+    const baseTheme = isDark ? DarkTheme : DefaultTheme;
+    return {
+      ...baseTheme,
+      dark: isDark,
+      colors: {
+        ...baseTheme.colors,
+        primary: colors.primary.DEFAULT,
+        background: colors.background,
+        card: colors.card.DEFAULT,
+        text: colors.foreground.DEFAULT,
+        border: colors.border.DEFAULT,
+        notification: colors.primary.DEFAULT,
+      },
+    };
+  }, [isDark, colors]);
 
   const headerOptions = {
     headerShown: true,
@@ -23,8 +48,9 @@ function RootStack() {
   };
 
   return (
-    <>
+    <NavThemeProvider value={navTheme}>
       <StatusBar style={isDark ? "light" : "dark"} />
+      {Platform.OS === "android" && <NavigationBar style={isDark ? "dark" : "light"} />}
       <Stack
         screenOptions={{
           headerShown: false,
@@ -51,20 +77,22 @@ function RootStack() {
           options={{ ...headerOptions, title: "Order Details" }}
         />
       </Stack>
-    </>
+    </NavThemeProvider>
   );
 }
 
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <ThemeProvider>
-            <RootStack />
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
+      <StorePersistGate>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <ThemeProvider>
+              <RootStack />
+            </ThemeProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </StorePersistGate>
     </Provider>
   );
 }
