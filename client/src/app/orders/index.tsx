@@ -6,33 +6,22 @@ import { PackageOpen } from "lucide-react-native";
 
 import OrderCard from "@/components/orders/OrderCard";
 import OrderStatusFilter from "@/components/orders/OrderStatusFilter";
-import { ORDERS } from "@/constants/orders";
-import { useTheme } from "@/theme";
-import { FILTERS, STATUS_META, type FilterKey } from "@/utils/orders";
+import { useAppSelector, selectOrders, selectOrdersCounts } from "@/store";
+import { useTheme, radius } from "@/theme";
+import type { Order } from "@/types/order";
+import { STATUS_META, type FilterKey } from "@/utils/orders";
 
 export default function OrdersScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const [filter, setFilter] = useState<FilterKey>("all");
 
-  const counts = useMemo(
-    () =>
-      FILTERS.reduce(
-        (acc, f) => ({
-          ...acc,
-          [f.key]:
-            f.key === "all"
-              ? ORDERS.length
-              : ORDERS.filter((o) => o.status === f.key).length,
-        }),
-        {} as Record<FilterKey, number>
-      ),
-    []
-  );
+  const orders = useAppSelector(selectOrders);
+  const counts = useAppSelector(selectOrdersCounts);
 
   const data = useMemo(
-    () => (filter === "all" ? ORDERS : ORDERS.filter((o) => o.status === filter)),
-    [filter]
+    () => (filter === "all" ? orders : orders.filter((o: Order) => o.status === filter)),
+    [filter, orders]
   );
 
   const emptyLabel =
@@ -67,7 +56,7 @@ export default function OrdersScreen() {
               style={{
                 width: 64,
                 height: 64,
-                borderRadius: 32,
+                borderRadius: radius.full,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: colors.surface.DEFAULT,
