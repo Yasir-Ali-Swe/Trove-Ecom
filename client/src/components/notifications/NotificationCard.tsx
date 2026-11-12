@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { View, Text, Pressable } from "react-native";
 import {
     Package,
@@ -11,8 +12,8 @@ import {
 } from "lucide-react-native";
 
 import type { AppNotification, NotificationType } from "@/types/notification";
-import { useTheme } from "@/theme";
-import { withAlpha } from "@/utils/orders";
+import { useTheme, radius } from "@/theme";
+import { withAlpha } from "@/utils/color";
 import { TYPE_COLOR, formatTimeAgo } from "@/utils/notifications";
 
 const TYPE_ICON: Record<NotificationType, LucideIcon> = {
@@ -29,7 +30,7 @@ interface NotificationCardProps {
     onAction?: () => void;
 }
 
-export default function NotificationCard({
+function NotificationCard({
     notification,
     expanded,
     onToggle,
@@ -45,7 +46,7 @@ export default function NotificationCard({
     return (
         <View
             style={{
-                borderRadius: 16,
+                borderRadius: radius.lg,
                 borderWidth: 1,
                 borderColor: read ? colors.border.DEFAULT : withAlpha(colors.primary.DEFAULT, 0.45),
                 backgroundColor: colors.card.DEFAULT,
@@ -68,7 +69,7 @@ export default function NotificationCard({
                         style={{
                             width: 44,
                             height: 44,
-                            borderRadius: 14,
+                            borderRadius: radius.md,
                             alignItems: "center",
                             justifyContent: "center",
                             backgroundColor: withAlpha(accent, 0.15),
@@ -97,7 +98,7 @@ export default function NotificationCard({
                                     style={{
                                         width: 8,
                                         height: 8,
-                                        borderRadius: 4,
+                                        borderRadius: radius.full,
                                         marginLeft: 8,
                                         backgroundColor: colors.primary.DEFAULT,
                                     }}
@@ -144,7 +145,7 @@ export default function NotificationCard({
                         accessibilityLabel={actionLabel}
                         style={({ pressed }) => ({
                             height: 44,
-                            borderRadius: 12,
+                            borderRadius: radius.md,
                             backgroundColor: pressed ? colors.primary.dark : colors.primary.DEFAULT,
                         })}
                     >
@@ -174,3 +175,5 @@ export default function NotificationCard({
         </View>
     );
 }
+
+export default memo(NotificationCard);
