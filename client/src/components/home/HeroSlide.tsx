@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ArrowRight } from "lucide-react-native";
 
 import type { HeroSlideProps } from "@/types/banner";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 const TEXT_SHADOW = {
   textShadowColor: "rgba(0,0,0,0.55)",
@@ -14,14 +14,15 @@ const TEXT_SHADOW = {
 } as const;
 
 function HeroSlide({ slide, width, onPress }: HeroSlideProps) {
+  const { colors } = useTheme();
   return (
     <View style={{ width }} className="px-4 py-1">
-      <View className="rounded-md shadow-lg">
+      <View className="rounded-xl shadow-lg">
         <Pressable
           onPress={onPress}
           accessibilityRole="button"
           accessibilityLabel={`${slide.title}. ${slide.ctaText}`}
-          className="h-[200px] w-full overflow-hidden rounded-md border border-border bg-surface active:opacity-95"
+          className="h-[200px] w-full overflow-hidden rounded-xl border border-border bg-surface active:opacity-95"
         >
           <Image
             source={{ uri: slide.image }}
@@ -35,17 +36,6 @@ function HeroSlide({ slide, width, onPress }: HeroSlideProps) {
             pointerEvents="none"
             style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(0,0,0,0.35)" }]}
           />
-
-          {/* 2. Stronger left-to-right scrim where the text sits */}
-          <LinearGradient
-            pointerEvents="none"
-            colors={["rgba(0,0,0,0.85)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.1)"]}
-            locations={[0, 0.6, 1]}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.5 }}
-            style={StyleSheet.absoluteFill}
-          />
-
           {/* 3. Content */}
           <View style={{ flex: 1, justifyContent: "space-between", padding: 20 }}>
             <View>
@@ -77,7 +67,7 @@ function HeroSlide({ slide, width, onPress }: HeroSlideProps) {
               </Text>
             </View>
 
-            <View className="flex-row items-center gap-2 self-start rounded-xl bg-primary px-4 py-2.5">
+            <View className="flex-row items-center gap-2 self-start rounded-md bg-primary px-4 py-2.5">
               <Text
                 style={{ color: colors.primary.foreground }}
                 className="text-xs font-bold tracking-wide"
