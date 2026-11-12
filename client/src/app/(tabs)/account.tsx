@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,9 +13,18 @@ import {
 } from "lucide-react-native";
 
 import AccountMenuItem from "@/components/account/AccountMenuItem";
-import { ORDERS } from "@/constants/orders";
-import { useTheme, type ThemeMode } from "@/theme";
-import { withAlpha } from "@/utils/orders";
+import AccountSection from "@/components/account/AccountSection";
+import AccountStat from "@/components/account/AccountStat";
+import ThemeOption from "@/components/account/ThemeOption";
+import {
+  useAppSelector,
+  selectTotalOrdersCount,
+  selectActiveOrdersCount,
+  selectCompletedOrdersCount,
+  selectUnreadNotificationsCount,
+} from "@/store";
+import { useTheme, radius } from "@/theme";
+import { withAlpha } from "@/utils/color";
 
 // TODO: replace with your real user data (store / API)
 const USER = {
@@ -25,9 +33,7 @@ const USER = {
   photo: null as string | null,
 };
 
-const ACTIVE_STATUSES = ["pending", "processing", "shipped"];
-
-function getInitials(name: string) {
+function getInitials(name: string): string {
   return name
     .split(" ")
     .filter(Boolean)
@@ -36,115 +42,14 @@ function getInitials(name: string) {
     .join("");
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  const { colors } = useTheme();
-
-  return (
-    <View style={{ marginTop: 28 }}>
-      <Text
-        style={{
-          color: colors.muted.foreground,
-          fontSize: 12,
-          fontWeight: "700",
-          letterSpacing: 0.8,
-          textTransform: "uppercase",
-          marginBottom: 10,
-          marginLeft: 4,
-        }}
-      >
-        {title}
-      </Text>
-      <View
-        style={{
-          borderRadius: 18,
-          borderWidth: 1,
-          borderColor: colors.border.DEFAULT,
-          backgroundColor: colors.card.DEFAULT,
-          overflow: "hidden",
-        }}
-      >
-        {children}
-      </View>
-    </View>
-  );
-}
-
-function Stat({ value, label }: { value: number; label: string }) {
-  const { colors } = useTheme();
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", paddingVertical: 16 }}>
-      <Text
-        style={{
-          color: colors.foreground.DEFAULT,
-          fontSize: 22,
-          fontWeight: "800",
-          letterSpacing: -0.5,
-        }}
-      >
-        {value}
-      </Text>
-      <Text style={{ color: colors.muted.foreground, fontSize: 12, marginTop: 2 }}>
-        {label}
-      </Text>
-    </View>
-  );
-}
-
-function ThemeOption({
-  mode,
-  label,
-  icon: Icon,
-}: {
-  mode: ThemeMode;
-  label: string;
-  icon: typeof Sun;
-}) {
-  const { colors, mode: current, setMode } = useTheme();
-  const selected = current === mode;
-
-  return (
-    <Pressable
-      onPress={() => setMode(mode)}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      accessibilityLabel={`${label} theme`}
-      style={{
-        flex: 1,
-        height: 42,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 11,
-        backgroundColor: selected ? colors.primary.DEFAULT : "transparent",
-      }}
-    >
-      <Icon
-        size={16}
-        strokeWidth={2.25}
-        color={selected ? colors.primary.foreground : colors.muted.foreground}
-      />
-      <Text
-        style={{
-          marginLeft: 8,
-          fontSize: 14,
-          fontWeight: "700",
-          color: selected ? colors.primary.foreground : colors.muted.foreground,
-        }}
-      >
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
 export default function Account() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
 
-  const totalOrders = ORDERS.length;
-  const activeOrders = ORDERS.filter((o) => ACTIVE_STATUSES.includes(o.status)).length;
-  const completedOrders = ORDERS.filter((o) => o.status === "completed").length;
+  const totalOrders = useAppSelector(selectTotalOrdersCount);
+  const activeOrders = useAppSelector(selectActiveOrdersCount);
+  const completedOrders = useAppSelector(selectCompletedOrdersCount);
+  const unreadNotifications = useAppSelector(selectUnreadNotificationsCount);
 
   return (
     <ScrollView
@@ -172,7 +77,7 @@ export default function Account() {
       <View
         style={{
           marginTop: 20,
-          borderRadius: 20,
+          borderRadius: radius.lg,
           borderWidth: 1,
           borderColor: colors.border.DEFAULT,
           overflow: "hidden",
@@ -194,7 +99,7 @@ export default function Account() {
               style={{
                 width: 72,
                 height: 72,
-                borderRadius: 36,
+                borderRadius: radius.full,
                 padding: 3,
                 borderWidth: 2,
                 borderColor: colors.primary.DEFAULT,
@@ -204,7 +109,7 @@ export default function Account() {
               <View
                 style={{
                   flex: 1,
-                  borderRadius: 33,
+                  borderRadius: radius.full,
                   overflow: "hidden",
                   alignItems: "center",
                   justifyContent: "center",
@@ -264,23 +169,25 @@ export default function Account() {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 12,
+              borderRadius: radius.md,
               borderWidth: 1,
               borderColor: colors.border.strong,
               backgroundColor: pressed ? colors.surface.elevated : colors.surface.DEFAULT,
             })}
           >
-            <Pencil size={15} color={colors.foreground.DEFAULT} strokeWidth={2.25} />
-            <Text
-              style={{
-                color: colors.foreground.DEFAULT,
-                fontSize: 14,
-                fontWeight: "700",
-                marginLeft: 8,
-              }}
-            >
-              Edit profile
-            </Text>
+            <View className="flex items-center flex-row mt-2">
+              <Pencil size={15} color={colors.foreground.DEFAULT} strokeWidth={2.25} />
+              <Text
+                style={{
+                  color: colors.foreground.DEFAULT,
+                  fontSize: 14,
+                  fontWeight: "700",
+                  marginLeft: 4,
+                }}
+              >
+                Edit profile
+              </Text>
+            </View>
           </Pressable>
         </View>
       </View>
@@ -290,21 +197,21 @@ export default function Account() {
         style={{
           flexDirection: "row",
           marginTop: 14,
-          borderRadius: 18,
+          borderRadius: radius.lg,
           borderWidth: 1,
           borderColor: colors.border.DEFAULT,
           backgroundColor: colors.card.DEFAULT,
         }}
       >
-        <Stat value={totalOrders} label="Orders" />
+        <AccountStat value={totalOrders} label="Orders" />
         <View style={{ width: 1, marginVertical: 14, backgroundColor: colors.border.DEFAULT }} />
-        <Stat value={activeOrders} label="In progress" />
+        <AccountStat value={activeOrders} label="In progress" />
         <View style={{ width: 1, marginVertical: 14, backgroundColor: colors.border.DEFAULT }} />
-        <Stat value={completedOrders} label="Delivered" />
+        <AccountStat value={completedOrders} label="Delivered" />
       </View>
 
       {/* Menu */}
-      <Section title="Shopping">
+      <AccountSection title="Shopping">
         <AccountMenuItem
           icon={ShoppingBag}
           title="My Orders"
@@ -322,19 +229,20 @@ export default function Account() {
           icon={Bell}
           title="Notifications"
           subtitle="Offers and order updates"
+          badge={unreadNotifications}
           onPress={() => router.push("/notifications")}
           isLast
         />
-      </Section>
+      </AccountSection>
 
       {/* Appearance */}
-      <Section title="Appearance">
+      <AccountSection title="Appearance">
         <View style={{ padding: 14 }}>
           <View
             style={{
               flexDirection: "row",
               padding: 4,
-              borderRadius: 15,
+              borderRadius: radius.md,
               backgroundColor: colors.surface.elevated,
             }}
           >
@@ -342,7 +250,7 @@ export default function Account() {
             <ThemeOption mode="dark" label="Dark" icon={Moon} />
           </View>
         </View>
-      </Section>
+      </AccountSection>
     </ScrollView>
   );
 }
