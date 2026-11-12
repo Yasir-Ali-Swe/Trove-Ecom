@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import { Check } from "lucide-react-native";
 
 import type { OrderStatus } from "@/types/order";
-import { useTheme } from "@/theme";
+import { useTheme, radius } from "@/theme";
 
 const STEPS = ["Placed", "Processing", "Shipped", "Completed"];
 
@@ -50,7 +50,7 @@ export default function OrderTracker({
                             style={{
                                 width: DOT,
                                 height: DOT,
-                                borderRadius: DOT / 2,
+                                borderRadius: radius.full,
                                 zIndex: 1,
                                 alignItems: "center",
                                 justifyContent: "center",
