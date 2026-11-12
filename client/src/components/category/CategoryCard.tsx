@@ -1,18 +1,20 @@
+import { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import type { CategoryCardProps } from "@/types/category";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
-export default function CategoryCard({
+function CategoryCard({
   name,
   icon: Icon,
   onPress,
 }: CategoryCardProps) {
+  const { colors } = useTheme();
   return (
     <Pressable
       onPress={onPress}
-      className="w-[48%] bg-card border border-border rounded-xl py-5 px-3 mb-4 items-center active:opacity-75"
+      className="w-[48%] bg-card border border-border rounded-lg py-5 px-3 mb-4 items-center active:opacity-75"
     >
-      <View className="w-13 h-13 rounded-xl bg-surface-elevated items-center justify-center mb-3 border border-border-strong/50">
+      <View className="w-13 h-13 rounded-md bg-surface-elevated items-center justify-center mb-3 border border-border-strong/50">
         <Icon size={26} color={colors.primary.DEFAULT} strokeWidth={2} />
       </View>
 
@@ -22,3 +24,5 @@ export default function CategoryCard({
     </Pressable>
   );
 }
+
+export default memo(CategoryCard);
