@@ -4,10 +4,15 @@ import { ArrowRight } from "lucide-react-native";
 import CartItem from "./CartItem";
 import type { CartWithItemsProps } from "@/types/cart";
 import { formatPrice } from "@/utils/format";
-import { colors } from "@/theme";
-
-const TAX_RATE = 0.02;
-const DELIVERY_FEE = 250;
+import { useTheme } from "@/theme";
+import {
+  useAppSelector,
+  selectCartSubtotal,
+  selectCartTax,
+  selectCartDeliveryFee,
+  selectCartTotal,
+  selectCartTotalCount,
+} from "@/store";
 
 export default function CartWithItems({
   cartItems,
@@ -15,14 +20,12 @@ export default function CartWithItems({
   onQuantityChange,
   onRemove,
 }: CartWithItemsProps) {
-  const cartTotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const tax = cartTotal * TAX_RATE;
-  const delivery = cartItems.length > 0 ? DELIVERY_FEE : 0;
-  const subtotal = Math.max(0, cartTotal + tax + delivery - discount);
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const { colors } = useTheme();
+  const cartTotal = useAppSelector(selectCartSubtotal);
+  const tax = useAppSelector(selectCartTax);
+  const delivery = useAppSelector(selectCartDeliveryFee);
+  const subtotal = useAppSelector(selectCartTotal);
+  const itemCount = useAppSelector(selectCartTotalCount);
 
   return (
     <View className="flex-1 bg-background">
@@ -56,7 +59,7 @@ export default function CartWithItems({
               Cart Summary
             </Text>
 
-            <View className="gap-3.5 bg-card p-4 rounded-xl border border-border">
+            <View className="gap-3.5 bg-card p-4 rounded-lg border border-border">
               <View className="flex-row justify-between">
                 <Text className="text-muted-foreground text-sm">Cart total</Text>
                 <Text className="text-foreground text-sm font-medium">
@@ -97,7 +100,7 @@ export default function CartWithItems({
 
             <Pressable
               onPress={() => router.push("/checkout")}
-              className="bg-primary rounded-xl py-4 mt-6 flex-row items-center justify-center active:bg-primary-dark"
+              className="bg-primary rounded-md py-4 mt-6 flex-row items-center justify-center active:bg-primary-dark"
             >
               <Text className="text-primary-foreground font-bold text-base mr-2">
                 Proceed to Checkout
