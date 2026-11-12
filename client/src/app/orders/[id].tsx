@@ -1,15 +1,16 @@
-import { useMemo, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MapPin, CreditCard, XCircle, PackageX } from "lucide-react-native";
 
-import StatusBadge from "@/components/orders/StatusBadge";
+import StatusBadge from "@/components/ui/StatusBadge";
 import OrderTracker from "@/components/orders/OrderTracker";
-import { ORDERS } from "@/constants/orders";
-import { useTheme } from "@/theme";
-import { formatOrderDate, withAlpha } from "@/utils/orders";
+import { useAppSelector, selectOrderById } from "@/store";
+import { useTheme, radius } from "@/theme";
+import { formatOrderDate } from "@/utils/date";
+import { withAlpha } from "@/utils/color";
 import { formatPrice } from "@/utils/format";
 
 function Card({ title, children }: { title?: string; children: ReactNode }) {
@@ -35,7 +36,7 @@ function Card({ title, children }: { title?: string; children: ReactNode }) {
       <View
         style={{
           padding: 16,
-          borderRadius: 16,
+          borderRadius: radius.lg,
           borderWidth: 1,
           borderColor: colors.border.DEFAULT,
           backgroundColor: colors.card.DEFAULT,
@@ -85,9 +86,9 @@ function SummaryRow({
 export default function OrderDetailScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
-  const { id } = useLocalSearchParams<{ id: string }>();
-
-  const order = useMemo(() => ORDERS.find((o) => o.id === id) ?? null, [id]);
+  const { id } = useLocalSearchParams<"/orders/[id]">();
+  const orderId = Array.isArray(id) ? id[0] : id ?? "";
+  const order = useAppSelector(selectOrderById(orderId));
 
   if (!order) {
     return (
@@ -105,14 +106,13 @@ export default function OrderDetailScreen() {
           Order not found
         </Text>
         <Text style={{ color: colors.muted.foreground, fontSize: 13, marginTop: 4, textAlign: "center" }}>
-          This order doesn't exist or was removed.
+          This order doesn&apos;t exist or was removed.
         </Text>
       </View>
     );
   }
 
   const { shippingAddress: addr } = order;
-  const isCancelled = order.status === "cancelled";
 
   return (
     <ScrollView
@@ -140,13 +140,13 @@ export default function OrderDetailScreen() {
 
         <View style={{ height: 1, backgroundColor: colors.border.DEFAULT, marginVertical: 16 }} />
 
-        {isCancelled ? (
+        {order.status === "cancelled" ? (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View
               style={{
                 width: 40,
                 height: 40,
-                borderRadius: 12,
+                borderRadius: radius.md,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: withAlpha(colors.destructive.DEFAULT, 0.15),
@@ -197,7 +197,7 @@ export default function OrderDetailScreen() {
                 style={{
                   width: 64,
                   height: 64,
-                  borderRadius: 12,
+                  borderRadius: radius.sm,
                   backgroundColor: colors.surface.elevated,
                 }}
               />
@@ -232,7 +232,7 @@ export default function OrderDetailScreen() {
             style={{
               width: 40,
               height: 40,
-              borderRadius: 12,
+              borderRadius: radius.md,
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: withAlpha(colors.primary.DEFAULT, 0.15),
@@ -262,7 +262,7 @@ export default function OrderDetailScreen() {
             style={{
               width: 40,
               height: 40,
-              borderRadius: 12,
+              borderRadius: radius.md,
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: withAlpha(colors.primary.DEFAULT, 0.15),
