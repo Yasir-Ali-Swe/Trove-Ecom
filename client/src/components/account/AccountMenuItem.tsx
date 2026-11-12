@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { View, Text, Pressable } from "react-native";
 import { ChevronRight, type LucideIcon } from "lucide-react-native";
 
-import { useTheme } from "@/theme";
-import { withAlpha } from "@/utils/orders";
+import { useTheme, radius } from "@/theme";
+import { withAlpha } from "@/utils/color";
 
 interface AccountMenuItemProps {
     icon: LucideIcon;
@@ -51,7 +51,7 @@ export default function AccountMenuItem({
                     style={{
                         width: 40,
                         height: 40,
-                        borderRadius: 12,
+                        borderRadius: radius.md,
                         alignItems: "center",
                         justifyContent: "center",
                         backgroundColor: withAlpha(colors.primary.DEFAULT, 0.14),
@@ -90,7 +90,7 @@ export default function AccountMenuItem({
                             minWidth: 22,
                             height: 22,
                             paddingHorizontal: 7,
-                            borderRadius: 11,
+                            borderRadius: radius.full,
                             alignItems: "center",
                             justifyContent: "center",
                             backgroundColor: colors.primary.DEFAULT,
