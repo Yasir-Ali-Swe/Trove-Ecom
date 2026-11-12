@@ -1,20 +1,36 @@
-import { View, Text, Pressable, Image } from "react-native";
+import { memo } from "react";
+import { View, Text, Pressable } from "react-native";
+import { Image } from "expo-image";
 import { Minus, Plus, Trash2 } from "lucide-react-native";
 import type { CartItemProps } from "@/types/cart";
 import { formatPrice } from "@/utils/format";
-import { colors } from "@/theme";
+import { useTheme, radius } from "@/theme";
+import { PRODUCTS } from "@/constants/products";
 
-export default function CartItem({
+function CartItem({
   item,
   onQuantityChange,
   onRemove,
 }: CartItemProps) {
+  const { colors } = useTheme();
+
+  const baseProductId = item.id.split("::")[0];
+  const catalogProduct = PRODUCTS.find((p) => p.id === baseProductId);
+  const imageUri =
+    item.image ||
+    item.images?.[0] ||
+    catalogProduct?.image ||
+    catalogProduct?.images?.[0] ||
+    "";
+
   return (
     <View className="flex-row items-center gap-3 py-4 border-b border-border">
       <Image
-        source={{ uri: item.image }}
-        className="w-19 h-19 rounded-xl bg-surface border border-border"
-        resizeMode="cover"
+        source={{ uri: imageUri }}
+        style={{ width: 76, height: 76, borderRadius: radius.sm }}
+        className="bg-surface border border-border"
+        contentFit="cover"
+        transition={200}
       />
 
       <View className="flex-1 gap-2">
@@ -29,7 +45,10 @@ export default function CartItem({
           <Pressable
             disabled={item.quantity <= 1}
             onPress={() => onQuantityChange(item.id, item.quantity - 1)}
-            className={`w-7 h-7 rounded-lg border border-border-strong items-center justify-center ${item.quantity <= 1 ? "opacity-30" : "active:bg-surface-elevated"
+            accessibilityRole="button"
+            accessibilityState={{ disabled: item.quantity <= 1 }}
+            accessibilityLabel={`Decrease quantity of ${item.name}`}
+            className={`w-7 h-7 rounded-sm border border-border-strong items-center justify-center ${item.quantity <= 1 ? "opacity-30" : "active:bg-surface-elevated"
               }`}
           >
             <Minus size={14} color={colors.foreground.DEFAULT} />
@@ -41,7 +60,9 @@ export default function CartItem({
 
           <Pressable
             onPress={() => onQuantityChange(item.id, item.quantity + 1)}
-            className="w-7 h-7 rounded-lg bg-primary items-center justify-center active:bg-primary-dark"
+            accessibilityRole="button"
+            accessibilityLabel={`Increase quantity of ${item.name}`}
+            className="w-7 h-7 rounded-sm bg-primary items-center justify-center active:bg-primary-dark"
           >
             <Plus size={14} color={colors.primary.foreground} />
           </Pressable>
@@ -49,7 +70,12 @@ export default function CartItem({
       </View>
 
       <View className="items-end justify-between self-stretch py-1">
-        <Pressable onPress={() => onRemove(item.id)} hitSlop={8}>
+        <Pressable
+          onPress={() => onRemove(item.id)}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={`Remove ${item.name} from cart`}
+        >
           <Trash2 size={16} color={colors.destructive.DEFAULT} />
         </Pressable>
 
@@ -60,3 +86,5 @@ export default function CartItem({
     </View>
   );
 }
+
+export default memo(CartItem);
