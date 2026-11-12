@@ -1,9 +1,10 @@
 import { View, Text, Pressable } from "react-native";
 import { router } from "expo-router";
 import { ShoppingBag, ArrowRight } from "lucide-react-native";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 export default function EmptyCart() {
+  const { colors } = useTheme();
   return (
     <View className="flex-1 bg-background items-center justify-center px-8">
       <View className="w-28 h-28 rounded-full bg-surface border border-border items-center justify-center">
@@ -19,8 +20,8 @@ export default function EmptyCart() {
       </Text>
 
       <Pressable
-        onPress={() => router.navigate("/(tabs)")}
-        className="bg-primary rounded-xl px-7 py-3.5 mt-8 flex-row items-center active:bg-primary-dark"
+        onPress={() => router.navigate("/products")}
+        className="bg-primary rounded-md px-7 py-3.5 mt-8 flex-row items-center active:bg-primary-dark"
       >
         <Text className="text-primary-foreground font-bold mr-2">Start Shopping</Text>
         <ArrowRight size={18} color={colors.primary.foreground} />
