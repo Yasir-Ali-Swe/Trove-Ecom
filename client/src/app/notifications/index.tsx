@@ -8,15 +8,22 @@ import {
   Platform,
   UIManager,
 } from "react-native";
-import { router, type Href } from "expo-router";
+import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BellOff } from "lucide-react-native";
 
 import NotificationCard from "@/components/notifications/NotificationCard";
 import NotificationFilter from "@/components/notifications/NotificationFilter";
-import { NOTIFICATIONS } from "@/constants/notifications";
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectNotifications,
+  selectNotificationsCounts,
+  markNotificationRead,
+  markAllNotificationsRead,
+} from "@/store";
 import type { AppNotification } from "@/types/notification";
-import { useTheme } from "@/theme";
+import { useTheme, radius } from "@/theme";
 import { isNewNotification, type NotificationFilterKey } from "@/utils/notifications";
 
 // Needed for LayoutAnimation on older Android architectures
@@ -33,23 +40,16 @@ const EMPTY_COPY: Record<NotificationFilterKey, { title: string; text: string }>
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
 
-  const [items, setItems] = useState<AppNotification[]>(NOTIFICATIONS);
+  const items = useAppSelector(selectNotifications);
+  const counts = useAppSelector(selectNotificationsCounts);
   const [filter, setFilter] = useState<NotificationFilterKey>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const counts = useMemo(
-    () => ({
-      all: items.length,
-      new: items.filter(isNewNotification).length,
-      unread: items.filter((n) => !n.read).length,
-    }),
-    [items]
-  );
-
   const data = useMemo(() => {
     if (filter === "new") return items.filter(isNewNotification);
-    if (filter === "unread") return items.filter((n) => !n.read);
+    if (filter === "unread") return items.filter((n: AppNotification) => !n.read);
     return items;
   }, [items, filter]);
 
@@ -60,12 +60,12 @@ export default function NotificationsScreen() {
     animate();
     setExpandedId((prev) => (prev === id ? null : id));
     // Opening a notification marks it as read
-    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-  }, []);
+    dispatch(markNotificationRead(id));
+  }, [dispatch]);
 
   const handleMarkAllRead = () => {
     animate();
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+    dispatch(markAllNotificationsRead());
   };
 
   const handleFilterChange = (key: NotificationFilterKey) => {
@@ -111,16 +111,19 @@ export default function NotificationsScreen() {
         data={data}
         keyExtractor={(n) => n.id}
         extraData={expandedId}
-        renderItem={({ item }) => (
-          <NotificationCard
-            notification={item}
-            expanded={expandedId === item.id}
-            onToggle={() => handleToggle(item.id)}
-            onAction={
-              item.route ? () => router.push(item.route as Href) : undefined
-            }
-          />
-        )}
+        renderItem={({ item }) => {
+          const targetRoute = item.route;
+          return (
+            <NotificationCard
+              notification={item}
+              expanded={expandedId === item.id}
+              onToggle={() => handleToggle(item.id)}
+              onAction={
+                targetRoute ? () => router.push(targetRoute) : undefined
+              }
+            />
+          );
+        }}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -142,7 +145,7 @@ export default function NotificationsScreen() {
               style={{
                 width: 64,
                 height: 64,
-                borderRadius: 32,
+                borderRadius: radius.full,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: colors.surface.DEFAULT,
