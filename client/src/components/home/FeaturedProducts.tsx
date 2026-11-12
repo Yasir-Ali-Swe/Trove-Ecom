@@ -1,8 +1,8 @@
 import { View, FlatList } from "react-native";
 import { router } from "expo-router";
 
-import HomeSectionHeader from "./HomeSectionHeader";
-import FeaturedProductCard from "@/components/product/FeaturedProductCard";
+import SectionHeader from "@/components/ui/SectionHeader";
+import FeaturedProductCard from "@/components/products/FeaturedProductCard";
 import { FEATURED_PRODUCTS } from "@/constants/products";
 import type { Product } from "@/types/product";
 
@@ -29,7 +29,7 @@ export default function FeaturedProducts({
   return (
     <View className="mb-6">
       {/* Section Header */}
-      <HomeSectionHeader
+      <SectionHeader
         title="Featured Products"
         subtitle="Handpicked products worth exploring."
         viewAllText="View All"
