@@ -9,7 +9,7 @@ import Animated, {
 
 import { CATEGORIES } from "@/constants/categories";
 import type { Category } from "@/types/category";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 const ITEM_WIDTH = 86;
 const ITEM_MARGIN = 10;
@@ -17,6 +17,7 @@ const ITEM_TOTAL_WIDTH = ITEM_WIDTH + ITEM_MARGIN;
 const SPEED = 42; // pixels per second
 
 export default function InfiniteCategorySlider() {
+  const { colors } = useTheme();
   const offset = useSharedValue(0);
   const paused = useSharedValue(false);
 
@@ -86,7 +87,7 @@ export default function InfiniteCategorySlider() {
                 key={`${category.id}-${index}`}
                 onPress={() => handleCategoryPress(category)}
                 style={{ width: ITEM_WIDTH, marginRight: ITEM_MARGIN }}
-                className="items-center bg-card border border-border rounded-xl py-3 px-1 active:opacity-75 active:scale-95 shadow-sm"
+                className="items-center bg-card border border-border rounded-lg py-3 px-1 active:opacity-75 active:scale-95 shadow-sm"
               >
                 <View className="w-11 h-11 rounded-full bg-surface-elevated/90 items-center justify-center mb-1.5 border border-border-strong/60 shadow-inner">
                   <Icon size={20} color={colors.primary.DEFAULT} strokeWidth={2} />
