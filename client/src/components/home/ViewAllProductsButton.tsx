@@ -2,9 +2,10 @@ import { View, Text, Pressable } from "react-native";
 import { router } from "expo-router";
 import { ArrowRight, ShoppingBag } from "lucide-react-native";
 
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 export default function ViewAllProductsButton() {
+  const { colors } = useTheme();
   const handlePress = () => {
     router.push({
       pathname: "/products",
@@ -15,12 +16,12 @@ export default function ViewAllProductsButton() {
   return (
     <View className="px-4">
       {/* Outer view carries the shadow; inner view clips the decoration */}
-      <View className="rounded-md shadow-md">
+      <View className="rounded-xl shadow-md">
         <Pressable
           onPress={handlePress}
           accessibilityRole="button"
           accessibilityLabel="View all products"
-          className="overflow-hidden rounded-md border border-border bg-card active:opacity-90 active:scale-[0.98]"
+          className="overflow-hidden rounded-xl border border-border bg-card active:opacity-90 active:scale-[0.98]"
         >
           {/* Decorative accents */}
           <View
