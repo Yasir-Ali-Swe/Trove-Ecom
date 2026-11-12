@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import FormField from "@/components/profile/FormField";
 import { useKeyboardHeight } from "@/hooks/useKeyboardHeight";
-import { colors } from "@/theme";
+import { useTheme, radius } from "@/theme";
 
 const FIELD_GAP = 16;
 const SECTION_GAP = 32;
@@ -30,6 +30,7 @@ type FormKey = keyof typeof INITIAL_FORM;
 type FormErrors = Partial<Record<FormKey, string>>;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
+  const { colors } = useTheme();
   return (
     <View style={{ marginTop: SECTION_GAP }}>
       <Text
@@ -56,6 +57,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export default function ProfileScreen() {
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const keyboardHeight = useKeyboardHeight();
 
@@ -226,7 +228,7 @@ export default function ProfileScreen() {
             accessibilityState={{ disabled: isSaving, busy: isSaving }}
             style={({ pressed }) => ({
               height: 52,
-              borderRadius: 14,
+              borderRadius: radius.md,
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: pressed
