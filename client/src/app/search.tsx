@@ -11,8 +11,11 @@ import type { ProductSearchSuggestion } from "@/types/product";
 
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ initialQuery?: string }>();
-  const [query, setQuery] = useState(params.initialQuery || "");
+  const params = useLocalSearchParams<"/search">();
+  const initialQueryParam = Array.isArray(params.initialQuery)
+    ? params.initialQuery[0]
+    : params.initialQuery || "";
+  const [query, setQuery] = useState(initialQueryParam);
   const [suggestions, setSuggestions] = useState<ProductSearchSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -74,7 +77,7 @@ export default function SearchScreen() {
 
   useEffect(() => {
     let isCancelled = false;
-    const initial = params.initialQuery?.trim();
+    const initial = initialQueryParam.trim();
     if (initial) {
       void searchProducts(initial).then((results) => {
         if (!isCancelled) {
@@ -88,7 +91,7 @@ export default function SearchScreen() {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [params.initialQuery]);
+  }, [initialQueryParam]);
 
   return (
     <View style={{ paddingTop: insets.top }} className="flex-1 bg-background">
